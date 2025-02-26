@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from ..models.url_data import UrlData
 from ..services.url_service import get_url
@@ -23,7 +23,7 @@ def shorten_url(url_data: UrlData):
 
 @router.get("/{url_id}")
 def url_redirect(url_id: str):
-    url = get_url(urls_db, url_id)
+    url: str = get_url(urls_db, url_id)
     if url is None:
-        return {"error": "URL not found"}
+        raise HTTPException(status_code=404, detail="URL not found")
     return RedirectResponse(url["url"], status_code=302)
