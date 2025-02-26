@@ -12,7 +12,7 @@ def read_root():
     return {"Hello": "World"}
 
 @router.post("/api/shorten-url")
-def shorten_url(url_data: UrlData):
+async def shorten_url(url_data: UrlData):
     url_info = url_data.model_dump()
     url_id = len(urls_db) + 1
     urls_db.append({
@@ -22,7 +22,7 @@ def shorten_url(url_data: UrlData):
     return {"short_url": f"{APP_SHORT_DOMAIN}/{url_id}"}
 
 @router.get("/{url_id}")
-def url_redirect(url_id: str):
+async def url_redirect(url_id: str):
     url: str = get_url(urls_db, url_id)
     if url is None:
         raise HTTPException(status_code=404, detail="URL not found")
