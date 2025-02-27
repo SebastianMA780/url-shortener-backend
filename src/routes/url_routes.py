@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from ..models.url_data import UrlData
 from ..services.url_service import get_url
+from src.utils import encode_base62
 
 router = APIRouter()
 urls_db = []
@@ -11,10 +12,11 @@ APP_SHORT_DOMAIN = "http://localhost:8000"
 def read_root():
     return {"Hello": "World"}
 
-@router.post("/api/shorten-url")
+@router.post("/api/urls")
 async def shorten_url(url_data: UrlData):
     url_info = url_data.model_dump()
-    url_id = len(urls_db) + 1
+    following_id = len(urls_db) + 1
+    url_id = encode_base62(following_id)
     urls_db.append({
         "id": url_id,
         "url": url_info["url"]
